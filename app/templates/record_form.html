@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Editar' if record else 'Novo' }} registro{% endblock %}
+{% block content %}
+<h1 class="mb-3">{{ 'Editar' if record else 'Novo' }} registro</h1>
+<div class="card shadow-sm border-0 rounded-4">
+  <div class="card-body">
+    <form method="post" class="row g-3">
+      <div class="col-md-2">
+        <label class="form-label">Produto</label>
+        <select class="form-select" name="produto" required>
+          {% set produto_sel = record.produto if record else '' %}
+          <option value="">Selecione</option>
+          <option value="Sinter" {{ 'selected' if produto_sel == 'Sinter' else '' }}>Sinter</option>
+          <option value="NPO" {{ 'selected' if produto_sel == 'NPO' else '' }}>NPO</option>
+          <option value="HTT" {{ 'selected' if produto_sel == 'HTT' else '' }}>HTT</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Cliente</label>
+        <input class="form-control" type="text" name="cliente" value="{{ record.cliente if record else '' }}" required>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Terminal</label>
+        <input class="form-control" type="text" name="terminal" value="{{ record.terminal if record else '' }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Termo</label>
+        <input class="form-control" type="text" name="termo" value="{{ record.termo if record else '' }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Data</label>
+        <input class="form-control" type="date" name="data_referencia" value="{{ record.data_referencia.strftime('%Y-%m-%d') if record else '' }}" required>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Plano</label>
+        <input class="form-control" type="number" step="0.01" name="plano" value="{{ record.plano if record else 0 }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">D+1</label>
+        <input class="form-control" type="number" step="0.01" name="d1" value="{{ record.d1 if record else 0 }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Real</label>
+        <input class="form-control" type="number" step="0.01" name="real" value="{{ record.real if record else 0 }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Observação</label>
+        <input class="form-control" type="text" name="observacao" value="{{ record.observacao if record else '' }}">
+      </div>
+      <div class="col-12">
+        <button class="btn btn-primary" type="submit">Salvar</button>
+        <a class="btn btn-secondary" href="{{ url_for('records.list_records') }}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

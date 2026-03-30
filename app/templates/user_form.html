@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Novo usuário{% endblock %}
+{% block content %}
+<h1 class="mb-3">Novo usuário</h1>
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form method="post" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Nome completo</label>
+        <input class="form-control" type="text" name="full_name" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Usuário</label>
+        <input class="form-control" type="text" name="username" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Perfil</label>
+        <select class="form-select" name="role">
+          <option value="reader">Leitura</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Senha</label>
+        <input class="form-control" type="password" name="password" required>
+      </div>
+      <div class="col-12">
+        <button class="btn btn-primary" type="submit">Salvar</button>
+        <a class="btn btn-secondary" href="{{ url_for('users.list_users') }}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,340 @@
+body {
+  background: #f5f7fb;
+}
+
+.nav-top {
+  background: linear-gradient(135deg, #0f5d73, #08384e);
+}
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f5d73, #08384e);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 16px;
+}
+
+.stat-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.08);
+}
+
+.stat-card .label {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.stat-card .value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0f5d73;
+}
+
+.table th {
+  white-space: nowrap;
+}
+
+.legend-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.legend-item, .product-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.legend-sinter, .produto-sinter.product-badge {
+  background: #d7e8ff;
+  color: #1456a0;
+}
+
+.legend-npo, .produto-npo.product-badge {
+  background: #e2e2e2;
+  color: #555;
+}
+
+.legend-htt, .produto-htt.product-badge {
+  background: #ffe1c4;
+  color: #c9690b;
+}
+
+tr.produto-sinter {
+  --bs-table-bg: #f2f7ff;
+}
+
+tr.produto-npo {
+  --bs-table-bg: #f7f7f7;
+}
+
+tr.produto-htt {
+  --bs-table-bg: #fff6ec;
+}
+
+
+.dashboard-total-table thead th {
+  background: #0f5d73;
+  color: #fff;
+  text-align: center;
+}
+
+.dashboard-total-table tbody td {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+
+.chart-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.clients-chart-wrap {
+  height: 420px;
+}
+
+.transport-chart-wrap {
+  height: 520px;
+}
+
+@media (max-width: 768px) {
+  .clients-chart-wrap {
+    height: 360px;
+  }
+
+  .transport-chart-wrap {
+    height: 420px;
+  }
+}
+
+
+.locomotiva-table thead th {
+  background: #f1f1f1;
+  color: #111;
+  text-align: center;
+}
+
+.locomotiva-table tbody td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+
+.stock-chart-wrap {
+  height: 230px;
+}
+
+.monthly-chart-wrap {
+  height: 230px;
+}
+
+.control-chart-wrap {
+  height: 620px;
+}
+
+.ferro-chart-wrap {
+  height: 320px;
+}
+
+.locomotiva-chart-title {
+  font-weight: 800;
+  color: #4b4b4b;
+  margin-bottom: 1rem;
+}
+
+.controle-tisl-title {
+  color: #2c839a;
+  font-style: italic;
+  font-weight: 800;
+  text-decoration: underline;
+  letter-spacing: 0.5px;
+}
+
+.acomp-title {
+  font-style: italic;
+  font-weight: 800;
+}
+
+.acomp-subtitle {
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+@media (max-width: 768px) {
+  .stock-chart-wrap,
+  .monthly-chart-wrap {
+    height: 260px;
+  }
+
+  .control-chart-wrap {
+    height: 420px;
+  }
+
+  .ferro-chart-wrap {
+    height: 280px;
+  }
+}
+
+
+.dashboard-tcs-frame {
+  border: 3px solid #efb07a;
+  padding: 1rem;
+  background: #fff;
+}
+
+.controle-tcs-page-title {
+  color: #a45000;
+  font-style: italic;
+  font-weight: 800;
+  text-decoration: underline;
+  margin: 0;
+}
+
+.dashboard-tcs-brand {
+  color: #4a5870;
+  font-weight: 800;
+  text-align: right;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.dashboard-tcs-brand span {
+  font-size: 0.8rem;
+  letter-spacing: 0.25rem;
+}
+
+.dashboard-tcs-mini-card {
+  background: linear-gradient(90deg, #d8d8d8 0%, #ececec 100%);
+  padding: 1rem;
+  height: 100%;
+}
+
+.dashboard-tcs-divider {
+  width: 4px;
+  border-radius: 999px;
+  background: #efb07a;
+  min-height: 220px;
+}
+
+.dashboard-tcs-section {
+  border-top: 4px solid #efb07a;
+  padding-top: 1rem;
+}
+
+.dashboard-tcs-section-title {
+  color: #a45000;
+  text-align: center;
+  font-style: italic;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.control-chart-wrap-tcs {
+  height: 560px;
+  background: #efe0d0;
+  padding: 0.5rem;
+}
+
+.locomotiva-chart-title-tcs,
+.controle-tcs-title,
+.acomp-title-tcs,
+.acomp-subtitle-tcs {
+  color: #a45000;
+}
+
+.acomp-title-tcs {
+  font-style: italic;
+  font-weight: 800;
+}
+
+.acomp-subtitle-tcs {
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+@media (max-width: 992px) {
+  .dashboard-tcs-divider { display: none; }
+  .control-chart-wrap-tcs { height: 420px; }
+}
+
+
+.frete-table thead th,
+.frete-total-row td:first-child,
+.frete-total-row td:nth-child(2),
+.frete-total-row td:nth-child(3) {
+  background: #7e7e7e;
+  color: #fff;
+}
+
+.frete-table thead th {
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.frete-table tbody td,
+.frete-compare-table tbody td,
+.frete-compare-table thead th {
+  vertical-align: middle;
+}
+
+.frete-table tbody td:nth-child(2),
+.frete-table tbody td:nth-child(3) {
+  text-align: right;
+}
+
+.frete-compare-table thead th {
+  background: #0f5d73;
+  color: #fff;
+}
+
+/* Background personalizado */
+body {
+    /* background-image: url('../img/background.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-attachment: fixed;
+}
+
+
+/* Fundo somente login */
+.login-page {
+    background-image: url('../img/background.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* Botões amarelos personalizados */
+.btn-warning {
+    background-color: #f5b400 !important;
+    border-color: #f5b400 !important;
+    color: #000 !important;
+    font-weight: 600;
+}
+
+
+/* Logo no fundo canto superior esquerdo (login) */
+.login-page {
+    background-color: #0f5c6e;
+    background-image: url('/static/img/logo_bg.png');
+    background-repeat: no-repeat;
+    background-position: top left;
+    background-size: 300px;
+}

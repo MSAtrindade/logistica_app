@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Planejado Locomotiva{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="mb-1">Planejado Locomotiva</h1>
+    <p class="text-muted mb-0">Preencha a base do Acompanhamento D+30 para Locomotiva TISL ou Locomotiva TCS.</p>
+  </div>
+</div>
+
+<div class="card shadow-sm mb-4 border-0 rounded-4">
+  <div class="card-body">
+    <form class="row g-3" method="get">
+      <div class="col-md-4">
+        <label class="form-label">Data início</label>
+        <input class="form-control" type="date" name="data_inicio" value="{{ data_inicio }}">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Data fim</label>
+        <input class="form-control" type="date" name="data_fim" value="{{ data_fim }}">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Locomotiva</label>
+        <select class="form-select" name="locomotiva_tipo">
+          <option value="tisl" {% if locomotiva_tipo == 'tisl' %}selected{% endif %}>Locomotiva TISL</option>
+          <option value="tcs" {% if locomotiva_tipo == 'tcs' %}selected{% endif %}>Locomotiva TCS</option>
+        </select>
+      </div>
+      <div class="col-12 d-flex gap-2 justify-content-end">
+        <a class="btn btn-outline-secondary" href="{{ url_for('main.planejado_locomotiva') }}">Limpar</a>
+        <button class="btn btn-primary" type="submit">Aplicar filtros</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4">
+  <div class="card-body">
+    <form method="post">
+      <input type="hidden" name="data_inicio" value="{{ data_inicio }}">
+      <input type="hidden" name="data_fim" value="{{ data_fim }}">
+      <input type="hidden" name="locomotiva_tipo" value="{{ locomotiva_tipo }}">
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle mb-0 locomotiva-table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Plano Ferro</th>
+              <th>Real Ferro</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in rows %}
+            <tr>
+              <td class="fw-bold">{{ row.data.strftime('%d/%m/%Y') }}</td>
+              <td style="min-width: 140px;">
+                <input
+                  class="form-control form-control-sm"
+                  type="number"
+                  step="0.01"
+                  name="plano_ferro_{{ row.data.strftime('%Y-%m-%d') }}"
+                  value="{{ row.plano_ferro }}"
+                  {% if not current_user.is_admin %}disabled{% endif %}
+                >
+              </td>
+              <td style="min-width: 140px;">
+                <input
+                  class="form-control form-control-sm"
+                  type="number"
+                  step="0.01"
+                  name="real_ferro_{{ row.data.strftime('%Y-%m-%d') }}"
+                  value="{{ row.real_ferro }}"
+                  {% if not current_user.is_admin %}disabled{% endif %}
+                >
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="3" class="text-center text-muted py-4">Nenhum dado encontrado para o período informado.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if current_user.is_admin %}
+      <div class="mt-3 d-flex justify-content-end">
+        <button class="btn btn-primary" type="submit">Salvar planejado</button>
+      </div>
+      {% endif %}
+    </form>
+  </div>
+</div>
+{% endblock %}

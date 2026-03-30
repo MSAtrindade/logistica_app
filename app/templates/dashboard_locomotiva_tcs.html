@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Locomotiva TCS{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="mb-1">Dashboard Locomotiva TCS</h1>
+    <p class="text-muted mb-0">Base Terminal TCS com filtro por data e produto.</p>
+  </div>
+  <a class="btn btn-outline-secondary" href="{{ url_for('main.dashboard') }}">Voltar ao Dashboard</a>
+</div>
+
+<div class="card shadow-sm mb-4 border-0 rounded-4">
+  <div class="card-body">
+    <form class="row g-3" method="get">
+      <div class="col-md-4">
+        <label class="form-label">Data inicial</label>
+        <input class="form-control" type="date" name="data_inicio" value="{{ data_inicio }}">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Data final</label>
+        <input class="form-control" type="date" name="data_fim" value="{{ data_fim }}">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Produto</label>
+        <select class="form-select" name="produto">
+          <option value="todos" {% if produto == 'todos' %}selected{% endif %}>Todos</option>
+          <option value="sf" {% if produto == 'sf' %}selected{% endif %}>SF / Sinter</option>
+        </select>
+      </div>
+      <div class="col-12 d-flex gap-2 justify-content-end">
+        <a class="btn btn-outline-secondary" href="{{ url_for('main.dashboard_locomotiva_tcs') }}">Limpar</a>
+        <button class="btn btn-primary" type="submit">Aplicar filtros</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="dashboard-tcs-frame mb-4">
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+    <h2 class="controle-tcs-page-title">CONTROLE TCS - {{ chart_data.control_title_date }}</h2>
+    <div class="dashboard-tcs-brand">TRINDADE<br><span>MINERAÇÃO</span></div>
+  </div>
+
+  <div class="row g-4 align-items-stretch mb-4">
+    <div class="col-lg-5">
+      <div class="dashboard-tcs-mini-card">
+        <h4 class="locomotiva-chart-title locomotiva-chart-title-tcs text-center">ESTOQUE (t) {{ chart_data.stock_title_date }}</h4>
+        <div class="chart-wrap stock-chart-wrap">
+          <canvas id="estoqueTcsChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2 d-none d-lg-flex justify-content-center">
+      <div class="dashboard-tcs-divider"></div>
+    </div>
+    <div class="col-lg-5">
+      <div class="dashboard-tcs-mini-card">
+        <h4 class="locomotiva-chart-title locomotiva-chart-title-tcs text-center">Volume Mensal (t)</h4>
+        <div class="chart-wrap monthly-chart-wrap">
+          <canvas id="volumeMensalTcsChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-tcs-section mb-4">
+    <h3 class="dashboard-tcs-section-title">Evolução do Estoque (t)</h3>
+    <div class="chart-wrap control-chart-wrap-tcs">
+      <canvas id="controleTcsChart"></canvas>
+    </div>
+  </div>
+
+  <div class="dashboard-tcs-section">
+    <div class="text-center mb-3">
+      <h3 class="acomp-title-tcs mb-1">ACOMPANHAMENTO D+30</h3>
+      <div class="acomp-subtitle-tcs">Ferroviário</div>
+    </div>
+    <div class="chart-wrap ferro-chart-wrap">
+      <canvas id="ferroTcsChart"></canvas>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const fmtNum = (value) => Number(value || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 });
+
+  const valueLabelPlugin = {
+    id: 'valueLabelPlugin',
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      ctx.save();
+      chart.data.datasets.forEach((dataset, datasetIndex) => {
+        const meta = chart.getDatasetMeta(datasetIndex);
+        if (meta.hidden) return;
+        meta.data.forEach((element, index) => {
+          const rawValue = dataset.data[index];
+          if (rawValue === null || rawValue === undefined) return;
+          const numericValue = Number(rawValue);
+          if (!Number.isFinite(numericValue) || numericValue === 0) return;
+          const formatted = fmtNum(numericValue);
+          const pos = element.tooltipPosition();
+          ctx.font = '700 11px Arial';
+          ctx.textBaseline = 'bottom';
+
+          if (dataset.type === 'bar') {
+            if (chart.options.indexAxis === 'y') {
+              ctx.fillStyle = '#fff';
+              ctx.textAlign = 'right';
+              ctx.fillText(formatted, pos.x - 10, pos.y + 4);
+            } else {
+              ctx.fillStyle = '#fff';
+              ctx.textAlign = 'center';
+              ctx.fillText(formatted, pos.x, pos.y + 6);
+            }
+          } else {
+            ctx.fillStyle = '#111';
+            ctx.textAlign = 'center';
+            ctx.fillText(formatted, pos.x, pos.y - 8);
+          }
+        });
+      });
+      ctx.restore();
+    }
+  };
+
+  const commonGrid = { color: 'rgba(0,0,0,0.12)' };
+
+  const estoqueCtx = document.getElementById('estoqueTcsChart');
+  if (estoqueCtx) {
+    new Chart(estoqueCtx, {
+      plugins: [valueLabelPlugin],
+      type: 'bar',
+      data: {
+        labels: {{ chart_data.estoque_bar_labels | tojson }},
+        datasets: [{
+          data: {{ chart_data.estoque_bar_values | tojson }},
+          backgroundColor: '#6b93c6',
+          borderColor: '#537fb2',
+          borderWidth: 1.5
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: (ctx) => `Estoque: ${fmtNum(ctx.parsed.x)}` } }
+        },
+        scales: {
+          x: { beginAtZero: true, grace: '15%', grid: commonGrid, ticks: { callback: (v) => fmtNum(v) } },
+          y: { grid: { display: false }, ticks: { color: '#444', font: { weight: '700', size: 13 } } }
+        }
+      }
+    });
+  }
+
+  const volumeCtx = document.getElementById('volumeMensalTcsChart');
+  if (volumeCtx) {
+    new Chart(volumeCtx, {
+      plugins: [valueLabelPlugin],
+      type: 'bar',
+      data: {
+        labels: {{ chart_data.volume_labels | tojson }},
+        datasets: [
+          {
+            label: 'Plano SF MSA',
+            data: {{ chart_data.volume_plano | tojson }},
+            backgroundColor: ['#5b8cc6']
+          },
+          {
+            label: 'Real SF MSA',
+            data: {{ chart_data.volume_real | tojson }},
+            backgroundColor: ['#c96a63']
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${fmtNum(ctx.parsed.y)}` } }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#444', font: { weight: '700' } } },
+          y: { beginAtZero: true, grace: '20%', grid: commonGrid, ticks: { callback: (v) => fmtNum(v) } }
+        }
+      }
+    });
+  }
+
+  const controleCtx = document.getElementById('controleTcsChart');
+  if (controleCtx) {
+    new Chart(controleCtx, {
+      plugins: [valueLabelPlugin],
+      data: {
+        labels: {{ chart_data.line_labels | tojson }},
+        datasets: [
+          {
+            type: 'line',
+            label: 'Real SF',
+            data: {{ chart_data.real_sf | tojson }},
+            borderColor: '#14aaf5',
+            backgroundColor: '#14aaf5',
+            tension: 0.1,
+            pointRadius: 4,
+            pointBackgroundColor: '#d9e7fa',
+            pointBorderColor: '#3f7ec7',
+            yAxisID: 'y'
+          },
+          {
+            type: 'line',
+            label: 'Estoque SF',
+            data: {{ chart_data.estoque_sf | tojson }},
+            borderColor: '#a45000',
+            backgroundColor: '#a45000',
+            tension: 0.15,
+            pointRadius: 0,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { weight: '700' }, color: '#a45000' } },
+          tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${fmtNum(ctx.parsed.y)}` } }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { maxRotation: 45, minRotation: 45 } },
+          y: {
+            beginAtZero: true,
+            position: 'left',
+            grace: '15%',
+            grid: commonGrid,
+            ticks: { callback: (v) => fmtNum(v) }
+          },
+          y1: {
+            beginAtZero: true,
+            position: 'right',
+            grace: '15%',
+            grid: { drawOnChartArea: false },
+            ticks: { callback: (v) => fmtNum(v) }
+          }
+        }
+      }
+    });
+  }
+
+  const ferroCtx = document.getElementById('ferroTcsChart');
+  if (ferroCtx) {
+    new Chart(ferroCtx, {
+      plugins: [valueLabelPlugin],
+      data: {
+        labels: {{ chart_data.line_labels | tojson }},
+        datasets: [
+          {
+            type: 'line',
+            label: 'Plano Ferro',
+            data: {{ chart_data.plano_ferro | tojson }},
+            borderColor: '#dd6f07',
+            backgroundColor: '#dd6f07',
+            tension: 0,
+            pointRadius: 0,
+            borderWidth: 3
+          },
+          {
+            type: 'line',
+            label: 'Real Ferro',
+            data: {{ chart_data.real_ferro | tojson }},
+            borderColor: '#0ea5e9',
+            backgroundColor: '#0ea5e9',
+            tension: 0,
+            pointRadius: 0,
+            borderWidth: 3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { weight: '700' } } },
+          tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${fmtNum(ctx.parsed.y)}` } }
+        },
+        scales: {
+          x: { grid: commonGrid, ticks: { maxRotation: 45, minRotation: 45, font: { weight: '700' } } },
+          y: { beginAtZero: true, grace: '20%', grid: commonGrid, ticks: { callback: (v) => fmtNum(v) } }
+        }
+      }
+    });
+  }
+</script>
+{% endblock %}

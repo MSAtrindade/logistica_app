@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Simulador de Frete{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="mb-1">Simulador de Frete</h1>
+    <p class="text-muted mb-0">Simule reajuste de frete e compare o impacto total.</p>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card shadow-sm border-0 rounded-4">
+      <div class="card-body">
+        <form method="post" class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Frete antigo</label>
+            <div class="input-group">
+              <span class="input-group-text">R$</span>
+              <input class="form-control" type="number" step="0.01" name="frete_antigo" value="{{ '%.2f'|format(frete_antigo) }}">
+            </div>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Fator (%)</label>
+            <div class="input-group">
+              <input class="form-control" type="number" step="0.01" name="fator" value="{{ '%.2f'|format(fator) }}">
+              <span class="input-group-text">%</span>
+            </div>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Gestão</label>
+            <div class="input-group">
+              <span class="input-group-text">R$</span>
+              <input class="form-control" type="number" step="0.01" name="gestao" value="{{ '%.2f'|format(gestao) }}">
+            </div>
+          </div>
+          <div class="col-12 d-flex justify-content-end">
+            <button class="btn btn-primary" type="submit">Calcular</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card shadow-sm border-0 rounded-4">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered mb-0 frete-table">
+            <thead>
+              <tr><th colspan="3">TARIFA</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Frete antigo</td><td>R$</td><td>{{ '{:,.2f}'.format(frete_antigo).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td></tr>
+              <tr><td>Fator (%)</td><td></td><td>{{ '{:,.2f}'.format(fator).replace(',', 'X').replace('.', ',').replace('X', '.') }}%</td></tr>
+              <tr><td>Reajuste</td><td>R$</td><td>{{ '{:,.2f}'.format(reajuste).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td></tr>
+              <tr class="fw-bold"><td>(+) Frete atual</td><td>R$</td><td>{{ '{:,.2f}'.format(frete_atual).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td></tr>
+              <tr><td>(+) Gestão</td><td>R$</td><td>{{ '{:,.2f}'.format(gestao).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td></tr>
+              <tr class="frete-total-row"><td>(=) TOTAL</td><td>R$</td><td>{{ '{:,.2f}'.format(total).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 mt-4">
+      <div class="card-body">
+        <h5 class="mb-3">Comparativo de diferenças</h5>
+        <div class="table-responsive">
+          <table class="table table-bordered mb-0 frete-compare-table">
+            <thead><tr><th>Comparação</th><th>Valor</th></tr></thead>
+            <tbody>
+              <tr><td>Diferença do reajuste</td><td>R$ {{ '{:,.2f}'.format(comparativo.dif_reajuste).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td></tr>
+              <tr><td>Diferença do frete atual vs antigo</td><td>R$ {{ '{:,.2f}'.format(comparativo.dif_frete).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td></tr>
+              <tr><td>Total sem gestão</td><td>R$ {{ '{:,.2f}'.format(comparativo.total_sem_gestao).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td></tr>
+              <tr><td>Gestão</td><td>R$ {{ '{:,.2f}'.format(comparativo.gestao).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td></tr>
+              <tr class="fw-bold"><td>Diferença do total vs frete antigo</td><td>R$ {{ '{:,.2f}'.format(comparativo.dif_total_vs_antigo).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td></tr>
+              <tr class="fw-bold"><td>Variação percentual total</td><td>{{ '{:,.2f}'.format(comparativo.perc_total_vs_antigo).replace(',', 'X').replace('.', ',').replace('X', '.') }}%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
